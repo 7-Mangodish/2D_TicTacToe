@@ -17,8 +17,8 @@ public class GridPosition : MonoBehaviour
     }
 
     private void OnMouseDown() {
+        //Debug.Log("Click on " + name + " " + GameManager.Instance.GetPlayerType());
         GameManager.Instance.HandlerClickPositionRpc(x, y, GameManager.Instance.GetPlayerType());
-        Debug.Log("Click on " + name + " " + GameManager.Instance.GetPlayerType());
     }
 
 }
