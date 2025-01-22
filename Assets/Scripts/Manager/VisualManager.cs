@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -6,11 +7,15 @@ public class VisualManager : NetworkBehaviour
     [SerializeField] private Transform crossTransform;
     [SerializeField] private Transform circleTransform;
     [SerializeField] private Transform lineWinTransform;
+
+    private List <GameObject> listSprite;
     private float gridSize = 3.2f;
     void Start()
     {
+        listSprite = new List<GameObject>();
         GameManager.Instance.OnClickPosition += VisualManager_OnClickPosition;
         GameManager.Instance.OnPlayerWin += VisualManager_OnPlayerWin;
+        GameManager.Instance.OnRematch += VisualManager_OnRematch;
     }
 
 
@@ -19,7 +24,14 @@ public class VisualManager : NetworkBehaviour
     {
         
     }
+    private void VisualManager_OnRematch(object sender, System.EventArgs e) {
+        foreach(GameObject obj in listSprite) {
+            Destroy(obj);
+        }
+        listSprite.Clear();
+    }
 
+    // Show Line when player win
     private void VisualManager_OnPlayerWin(object sender, GameManager.OnPlayerWinArgs e) {
         SpawnLineWinRpc(e.posWinX, e.posWinY, e.winAngle);
     }
@@ -28,9 +40,12 @@ public class VisualManager : NetworkBehaviour
     private void SpawnLineWinRpc(int x, int y, float angle) {
         Transform prefab = Instantiate(lineWinTransform, GetPositionOnGrid(x, y),Quaternion.Euler(0, 0, angle));
         prefab.GetComponent<NetworkObject>().Spawn(true);
-        Debug.Log("Spawn Line: " + " " + x + " " + y + " " + angle);    
+
+        listSprite.Add(prefab.gameObject);
+        //Debug.Log("Spawn Line: " + " " + x + " " + y + " " + angle);    
     }
 
+    // Show sprite
     private void VisualManager_OnClickPosition(object sender, GameManager.OnClickPositionEventArgs e) {
         SpawnGameObjectRpc(e.posX, e.posY, e.playerType);
     }
@@ -42,8 +57,11 @@ public class VisualManager : NetworkBehaviour
             prefab = crossTransform;
         else
             prefab = circleTransform;
+
         Transform spawnPrefab = Instantiate(prefab, GetPositionOnGrid(x, y), Quaternion.identity);
         spawnPrefab.GetComponent<NetworkObject>().Spawn(true);
+
+        listSprite.Add(spawnPrefab.gameObject);
         //Debug.Log("Spawned PlayerType: " + playerType);
 
     }

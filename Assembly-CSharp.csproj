@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\Manager\GameManager.cs" />
     <Compile Include="Assets\Scripts\Manager\UIManager.cs" />
     <Compile Include="Assets\Scripts\UI\ScoreBoard.cs" />
+    <Compile Include="Assets\Scripts\Manager\GameOverUiManager.cs" />
     <Compile Include="Assets\Scripts\Manager\VisualManager.cs" />
   </ItemGroup>
   <ItemGroup>

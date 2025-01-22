@@ -19,6 +19,8 @@ public class GameManager : NetworkBehaviour
     }
     public event EventHandler<OnClickPositionEventArgs> OnClickPosition;
     public event EventHandler<OnPlayerWinArgs> OnPlayerWin;
+    public event EventHandler<PlayerType> OnStartGame;
+    public event EventHandler OnRematch;
     public enum PlayerType {
         None,
         cross,
@@ -26,7 +28,10 @@ public class GameManager : NetworkBehaviour
     }
 
     private PlayerType playerType;
-    public  NetworkVariable <PlayerType> playerTurn = new NetworkVariable<PlayerType>(PlayerType.cross);
+    public NetworkVariable <PlayerType> playerTurn = new NetworkVariable<PlayerType>(PlayerType.cross);
+    public NetworkVariable<int> crossPlayerScore = new NetworkVariable<int>(0);
+    public NetworkVariable<int> circlePlayerScore = new NetworkVariable<int>(0);
+
 
     private PlayerType[,] arrayPlayer = new PlayerType[3, 3];
     public struct locWin {
@@ -35,7 +40,8 @@ public class GameManager : NetworkBehaviour
         public PlayerType type;
     }
     private locWin win = new locWin();
-
+    public bool isReady = false;
+    public bool canPlay = false;
     private void Awake() {
         if(instance == null)
             instance = this;
@@ -47,13 +53,17 @@ public class GameManager : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         playerType = (NetworkManager.Singleton.LocalClientId == 0)? PlayerType.cross : PlayerType.circle;
+        if (IsServer) {
+            NetworkManager.Singleton.OnClientConnectedCallback += StartGame_OnClientConnectedCallBack;
+        }
         //Debug.Log("ClientId: " + NetworkManager.Singleton.LocalClientId + ", PlayerType: " + this.playerType);
     }
 
 
     [Rpc(SendTo.Server)]
     public void HandlerClickPositionRpc(int x, int y, PlayerType playerType) {
-
+        if (!canPlay)
+            return;
         if (playerType != playerTurn.Value)
             return;
         if (arrayPlayer[x, y] != PlayerType.None)
@@ -72,18 +82,22 @@ public class GameManager : NetworkBehaviour
             playerTurn.Value = PlayerType.cross;
 
 
-        if (IsServer) {
-            NetworkManager.Singleton.OnClientConnectedCallback += StartGame_OnClientConnectedCallBack;
-        }
 
-        if(CheckPlayerWin()) {
+        if (CheckPlayerWin()) {
+            win.type = arrayPlayer[win.pos.x, win.pos.y];
             OnPlayerWin?.Invoke(this, new OnPlayerWinArgs {
                 posWinX = win.pos.x,
                 posWinY = win.pos.y,
                 winType = win.type,
                 winAngle = win.angle,
             }) ;
-            win.type = arrayPlayer[win.pos.x, win.pos.y];
+
+            if (win.type == PlayerType.cross)
+                crossPlayerScore.Value += 1;
+            else
+                circlePlayerScore.Value += 1;    
+            
+            canPlay = false;
             Debug.Log("Win: " + win.pos + " " + win.angle + " " + win.type);
         }
     }
@@ -140,13 +154,45 @@ public class GameManager : NetworkBehaviour
         return  false;
     }
 
-    
+    #region StartGame
     private void StartGame_OnClientConnectedCallBack(ulong obj) {
         if(NetworkManager.Singleton.ConnectedClientsList.Count == 2) {
             // Start game
             this.playerTurn.Value = PlayerType.cross;
+            canPlay = true;
+            TriggerStartGameRpc();
         }
     }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void TriggerStartGameRpc() {
+        OnStartGame?.Invoke(this, PlayerType.cross);
+    }
+    #endregion
+
+    #region Rematch
+    [Rpc(SendTo.Server)]
+    public void RematchRpc() {
+        Debug.Log("IsReady: " + isReady);
+        if (isReady) {
+            for (int i = 0; i < arrayPlayer.GetLength(0); i++) {
+                for (int j = 0; j < arrayPlayer.GetLength(1); j++) {
+                    arrayPlayer[i, j] = PlayerType.None;
+                }
+            }
+            OnRematch?.Invoke(this, EventArgs.Empty);
+            isReady = false;
+            canPlay = true;
+        }
+
+    }
+
+    [Rpc(SendTo.Server)]
+    public void ReadyMatchRpc() {
+        isReady = true;
+    }
+    #endregion
+
 
     public PlayerType GetPlayerType() {
         return playerType;
