@@ -74,3 +74,5 @@ MonoBehaviour:
   crossTransform: {fileID: 3793876642467294572, guid: bced8fa44ecfc654a9d7afe17d6c41a8, type: 3}
   circleTransform: {fileID: 3793876642467294572, guid: c78e6e24095414e40bf4d400c13a15ef, type: 3}
   lineWinTransform: {fileID: 3292941544091086400, guid: efc82bf1425538f4c8ee24cebbd15db7, type: 3}
+  crossParticle: {fileID: 6402918772703048456, guid: 947bb4d791304134bb0c7354a2a5709e, type: 3}
+  circleParticle: {fileID: 2632799711485017280, guid: 88199063df937184489bf1a4cb3096ad, type: 3}

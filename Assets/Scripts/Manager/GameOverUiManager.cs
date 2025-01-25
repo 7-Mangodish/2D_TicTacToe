@@ -9,6 +9,7 @@ public class GameOverUiManager : NetworkBehaviour
     [SerializeField] private GameObject notifyPanel;
     [SerializeField] private GameObject winTiltle;
     [SerializeField] private GameObject loseTiltle;
+    [SerializeField] private GameObject tieTiltle;
     [SerializeField] private Button readyBtn;
     [SerializeField] private Button rematchBtn;
     [SerializeField] private TextMeshProUGUI crossPlayerScore;
@@ -37,13 +38,19 @@ public class GameOverUiManager : NetworkBehaviour
         GameManager.Instance.OnPlayerWin += GameOver_OnPlayerWinRpc;
         GameManager.Instance.crossPlayerScore.OnValueChanged += UpdateCrossScore_OnValueChange;
         GameManager.Instance.circlePlayerScore.OnValueChanged += UpdateCircleScore_OnValueChange;
+        GameManager.Instance.OnPlayerTie += GameOver_OnPlayerTie;
     }
+
+
 
     void Update()
     {
         
     }
 
+    private void GameOver_OnPlayerTie(object sender, System.EventArgs e) {
+        SetPanelTieRpc();
+    }
     private void UpdateCrossScore_OnValueChange(int oldVal, int newVal) {
         crossPlayerScore.text = newVal.ToString();
     }
@@ -55,6 +62,7 @@ public class GameOverUiManager : NetworkBehaviour
         SetPanelRpc(e.winType);
     }
 
+    #region When Player Win
     [Rpc(SendTo.ClientsAndHost)]
     private void SetPanelRpc(GameManager.PlayerType winType) {
 
@@ -69,6 +77,17 @@ public class GameOverUiManager : NetworkBehaviour
         }
         SetRematchBtn();
     }
+    #endregion
+
+    #region When Player Tie
+    [Rpc(SendTo.ClientsAndHost)]
+    private void SetPanelTieRpc() {
+        gameOverUI.SetActive(true) ;
+        tieTiltle.SetActive(true);
+        SetRematchBtn() ;
+    }
+    #endregion
+
     private void SetRematchBtn() {
         if (GameManager.Instance.IsServer) {
             rematchBtn.gameObject.SetActive(true);
@@ -77,12 +96,13 @@ public class GameOverUiManager : NetworkBehaviour
             readyBtn.gameObject.SetActive(true);
         }
     }
-
     private void Hide() {
         gameOverUI.SetActive(false);
         winTiltle.SetActive(false);
         loseTiltle.SetActive(false);
+        tieTiltle.SetActive(false);
         readyBtn.gameObject.SetActive(false);
         rematchBtn.gameObject.SetActive(false);
+        notifyPanel.gameObject.SetActive(false);
     }
 }

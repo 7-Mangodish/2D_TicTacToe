@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ public class VisualManager : NetworkBehaviour
     [SerializeField] private Transform crossTransform;
     [SerializeField] private Transform circleTransform;
     [SerializeField] private Transform lineWinTransform;
+    [SerializeField] private GameObject crossParticle;
+    [SerializeField] private GameObject circleParticle;
 
     private List <GameObject> listSprite;
     private float gridSize = 3.2f;
@@ -60,14 +63,27 @@ public class VisualManager : NetworkBehaviour
 
         Transform spawnPrefab = Instantiate(prefab, GetPositionOnGrid(x, y), Quaternion.identity);
         spawnPrefab.GetComponent<NetworkObject>().Spawn(true);
+        SetParticleRpc(x,y,playerType);
 
         listSprite.Add(spawnPrefab.gameObject);
         //Debug.Log("Spawned PlayerType: " + playerType);
 
     }
 
+    [Rpc(SendTo.ClientsAndHost)]
+    private void SetParticleRpc(int x, int y, GameManager.PlayerType type) {
+        if(type == GameManager.PlayerType.cross) {
+            Instantiate(crossParticle, GetPositionOnGrid(x,y), Quaternion.identity);
+        }
+        else {
+            Instantiate(circleParticle, GetPositionOnGrid(x, y), Quaternion.identity);
+
+        }
+    }
+
     private Vector2 GetPositionOnGrid(int x, int y) {
         //Debug.Log("posX: " + x + ",posY: " + y);
         return new Vector2(gridSize*(y-1), gridSize * (1-x));
     }
+
 }

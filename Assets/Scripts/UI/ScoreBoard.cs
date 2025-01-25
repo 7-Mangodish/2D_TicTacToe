@@ -1,15 +1,19 @@
+using System;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-public class ScoreBoard : MonoBehaviour
+public class ScoreBoard : NetworkBehaviour
 {
+    [SerializeField] private GameObject crossNameText;
     [SerializeField] private GameObject crossScore;
     [SerializeField] private GameObject crossArrow;
 
+    [SerializeField] private GameObject circleNameText;
     [SerializeField] private GameObject circleScore;
     [SerializeField] private GameObject circleArrow;
 
+    [SerializeField] private GameObject code;
     private void Awake() {
         crossArrow.SetActive(false);
         circleArrow.SetActive(false);
@@ -20,6 +24,14 @@ public class ScoreBoard : MonoBehaviour
         GameManager.Instance.crossPlayerScore.OnValueChanged += UpdateCrossScore_OnValueChange;
         GameManager.Instance.circlePlayerScore.OnValueChanged += UpdateCircleScore_OnValueChange;
         GameManager.Instance.OnStartGame += ScoreBoard_OnStartGame;
+        GameManager.Instance.OnPlayerHost += ScoreBoard_OnPlayerHost;
+    }
+
+    private void ScoreBoard_OnPlayerHost(object sender, EventArgs e) {
+        crossNameText.gameObject.GetComponent<TextMeshProUGUI>().text = GameManager.Instance.playerName;
+        circleNameText.gameObject.GetComponent<TextMeshProUGUI>().text = "Wait for other player";
+        code.SetActive(true);
+        code.gameObject.GetComponent<TextMeshProUGUI>().text = "Code: "+GameManager.Instance.GetCodeGame();
     }
 
     private void UpdateCrossScore_OnValueChange(int oldVal, int newVal) {
@@ -30,19 +42,31 @@ public class ScoreBoard : MonoBehaviour
         circleScore.GetComponent<TextMeshProUGUI>().text = newVal.ToString();
     }
 
-    private void ScoreBoard_OnStartGame(object sender, GameManager.PlayerType typeStart) {
-        Debug.Log("Start with type: " + typeStart);
-        if(typeStart == GameManager.PlayerType.cross)
-            crossArrow.SetActive(true);
-        else
-            circleArrow.SetActive(true);
+    private void ScoreBoard_OnStartGame(object sender, GameManager.OnStartGameArgs e) {
+        SetUpToStartRpc(e.crossPlayerName, e.circlePlayerName, e.playerType);
     }
 
-    private void  ChangeArrow_OnChangeTurn(GameManager.PlayerType oldVal, GameManager.PlayerType newVal) {
-        //Debug.Log("Old: " + oldVal);
-        //Debug.Log("New: " + newVal);
-        //Debug.Log("Turn: "+GameManager.Instance.playerTurn.Value);
+    [Rpc(SendTo.ClientsAndHost)]
+    private void SetUpToStartRpc(string crossPlayerName, string circlePlayerName, GameManager.PlayerType firstType) {
+        GameManager.Instance.crossPlayerName = crossPlayerName;
+        GameManager.Instance.circlePlayerName = circlePlayerName;
 
+        crossNameText.gameObject.GetComponent<TextMeshProUGUI>().text = crossPlayerName;
+        circleNameText.gameObject.GetComponent<TextMeshProUGUI>().text = circlePlayerName;
+
+        if (firstType == GameManager.PlayerType.cross) {
+            crossArrow.SetActive(true);
+        }
+        else {
+            circleArrow.SetActive(true);
+        }
+
+        Debug.Log("Start with type: " + firstType);
+        Debug.Log("PlayerType: " + GameManager.Instance.GetPlayerType());
+        Debug.Log("CrossPlayerName: " + GameManager.Instance.crossPlayerName);
+        Debug.Log("CirclePlayerName: " + GameManager.Instance.circlePlayerName);
+    }
+    private void  ChangeArrow_OnChangeTurn(GameManager.PlayerType oldVal, GameManager.PlayerType newVal) {
         if (newVal == GameManager.PlayerType.cross) {
             crossArrow.SetActive(true);
             circleArrow.SetActive(false);
