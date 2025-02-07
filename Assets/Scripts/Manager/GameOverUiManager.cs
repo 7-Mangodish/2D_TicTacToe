@@ -1,6 +1,7 @@
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameOverUiManager : NetworkBehaviour
@@ -15,8 +16,12 @@ public class GameOverUiManager : NetworkBehaviour
     [SerializeField] private TextMeshProUGUI crossPlayerScore;
     [SerializeField] private TextMeshProUGUI circlePlayerScore;
 
+    [SerializeField] private Button menuBtn;
+
     private void Awake() {
         rematchBtn.onClick.AddListener(() => {
+            SoundManager.Instance.Play("ClickBtn");
+
             Debug.Log("rematchBtn");
             if(GameManager.Instance.isReady == true) {
                 Hide();
@@ -27,9 +32,22 @@ public class GameOverUiManager : NetworkBehaviour
             }
         });
         readyBtn.onClick.AddListener(() => {
+            SoundManager.Instance.Play("ClickBtn");
+
             Debug.Log("Ready");
             GameManager.Instance.ReadyMatchRpc();
             Hide();
+        });
+        menuBtn.onClick.AddListener(() => {
+            SoundManager.Instance.Play("ClickBtn");
+            GameObject networkManager = GameObject.FindGameObjectWithTag("NetworkManager");
+
+            if (networkManager != null)
+                Debug.Log("Find Network");
+            Destroy(networkManager);
+
+            NetworkManager.Singleton.Shutdown();
+            SceneManager.LoadScene(0);
         });
     }
     void Start()

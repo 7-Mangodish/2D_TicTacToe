@@ -20,6 +20,7 @@ public class GameManager : NetworkBehaviour {
         public string crossPlayerName;
         public string circlePlayerName;
         public PlayerType playerType;
+        public string codeGame;
     }
     public event EventHandler<OnClickPositionEventArgs> OnClickPosition;
     public event EventHandler<OnPlayerWinArgs> OnPlayerWin;
@@ -51,23 +52,24 @@ public class GameManager : NetworkBehaviour {
     public bool isReady = false;
     public bool canPlay = false;
 
-    private string codeGame;
+
     private void Awake() {
         if(instance == null)
             instance = this;
         else {
-            Debug.Log("There are more than one Gamemanger");
             Destroy(gameObject);
-        }       
-        DontDestroyOnLoad(gameObject);
+        }
+
+        playerName = MenuGameUiManager.namePlayer;
+        Debug.Log(playerName);
     }
 
     public override void OnNetworkSpawn() {
+
         if (NetworkManager.Singleton.LocalClientId == 0) {
             playerType = PlayerType.cross;
             crossPlayerName = playerName;
             OnPlayerHost?.Invoke(this, EventArgs.Empty);
-            Debug.Log("Code: " + this.codeGame);
         }
         else {
             playerType = PlayerType.circle;
@@ -75,6 +77,7 @@ public class GameManager : NetworkBehaviour {
             SetCirclePlayerNameRpc(playerName);
         }
         if (IsServer) {
+
             NetworkManager.Singleton.OnClientConnectedCallback += StartGame_OnClientConnectedCallBack;
         }
     }
@@ -199,17 +202,38 @@ public class GameManager : NetworkBehaviour {
             // Start game
             this.playerTurn.Value = PlayerType.cross;
             canPlay = true;
+
+            UpdateNameAndCodeRpc(crossPlayerName, circlePlayerName);
+            Debug.Log("Run");
             TriggerStartGameRpc();
         }
     }
 
-    [Rpc(SendTo.Server)]
+    [Rpc(SendTo.ClientsAndHost)]
     private void TriggerStartGameRpc() {
+        Debug.Log("Start Game");
+
+        string code;
+
+        if(IsServer)
+            code = TestRelay.CodeGame;
+        else
+            code = MenuGameUiManager.codeType;
+
+
         OnStartGame?.Invoke(this, new OnStartGameArgs {
             crossPlayerName = this.crossPlayerName,
             circlePlayerName = this.circlePlayerName,
             playerType = PlayerType.cross,
-        });
+            codeGame = code
+        }) ;
+    }
+    [Rpc(SendTo.NotServer)]
+    private void UpdateNameAndCodeRpc(string crossPlayerName, string circlePlayerName) {
+        this.crossPlayerName = crossPlayerName;
+        this.circlePlayerName = circlePlayerName;
+
+        Debug.Log(this.crossPlayerName + " " + this.circlePlayerName + " ");
     }
     #endregion
 
@@ -248,14 +272,6 @@ public class GameManager : NetworkBehaviour {
     [Rpc(SendTo.Server)]
     public void SetCirclePlayerNameRpc( string circlePlayerName) {
         this.circlePlayerName = circlePlayerName;
-        Debug.Log(this.circlePlayerName);
     }
 
-    public void SetCodeGame(string code) {
-        this.codeGame = code;
-    }
-
-    public string GetCodeGame() {
-        return this.codeGame;
-    }
 }

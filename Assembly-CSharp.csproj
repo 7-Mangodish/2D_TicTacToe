@@ -65,11 +65,14 @@
     <Compile Include="Assets\Scripts\Manager\MenuGameUiManager.cs" />
     <Compile Include="Assets\Scripts\GridPosition.cs" />
     <Compile Include="Assets\Scripts\Manager\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Manager\UIManager.cs" />
+    <Compile Include="Assets\Scripts\Manager\PauseUIManager.cs" />
+    <Compile Include="Assets\Scripts\Manager\SoundManager\Sound.cs" />
     <Compile Include="Assets\Scripts\Lobby\TestLobby.cs" />
     <Compile Include="Assets\Scripts\Lobby\TestRelay.cs" />
     <Compile Include="Assets\Scripts\UI\ScoreBoard.cs" />
+    <Compile Include="Assets\Scripts\Manager\JoinGameManager.cs" />
     <Compile Include="Assets\Scripts\Manager\GameOverUiManager.cs" />
+    <Compile Include="Assets\Scripts\Manager\SoundManager\SoundManager.cs" />
     <Compile Include="Assets\Scripts\Manager\VisualManager.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 using System;
 using System.Security;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
@@ -14,11 +15,19 @@ public class TestRelay : MonoBehaviour
 {
     private static TestRelay instance;
     public static TestRelay Instance { get { return instance; } }
+
+    [SerializeField] private GameObject[] listNetworkObj;
+
+    private static string codeGame;
+    public static string CodeGame { get { return codeGame; } }
+
     private void Awake() {
         if (instance == null)
             instance = this;
         else
             Destroy(this.gameObject);
+
+        DontDestroyOnLoad(gameObject);
     }
     async void Start()
     {
@@ -42,22 +51,31 @@ public class TestRelay : MonoBehaviour
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public async void CreateRelay() {
         try {
+
+            foreach (GameObject obj in listNetworkObj) {
+                Instantiate(obj, Vector3.zero, Quaternion.identity);
+                Debug.Log("Init " + obj.name);
+
+            }
+
+            await Task.Delay(100);
+
             Allocation allocation =  await RelayService.Instance.CreateAllocationAsync(1);
             string code = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-            GameManager.Instance.SetCodeGame(code);
+            codeGame = code;
             Debug.Log(code);
-            
+
+
 
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(
                 AllocationUtils.ToRelayServerData(allocation, "dtls"));
+
+            if(NetworkManager.Singleton == null) {
+                Debug.Log("Null");
+            }
             NetworkManager.Singleton.StartHost();
         }
         catch(RelayServiceException e) {
@@ -68,16 +86,38 @@ public class TestRelay : MonoBehaviour
     public async void JoinRelay(string code) {
         try {
 
+            foreach (GameObject obj in listNetworkObj) {
+                Instantiate(obj, Vector3.zero, Quaternion.identity);
+                Debug.Log("Init " + obj.name);
+
+            }
+
+            await Task.Delay(100);
+
             JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(code);
+
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(
                 AllocationUtils.ToRelayServerData(joinAllocation, "dtls"));
 
             Debug.Log("Join Relay: " + code);
             NetworkManager.Singleton.StartClient();
-
         }
         catch (RelayServiceException e) {
             Debug.Log(e);
         }
     }
+
+    public void OutMatch() {
+        GameObject[] listGameObjects = GameObject.FindGameObjectsWithTag("NetworkObjects");
+        Debug.Log(listGameObjects.Length);
+
+        foreach (GameObject obj in listGameObjects) {
+            Debug.Log(obj.name);
+            Destroy(obj);
+        }
+
+        NetworkManager.Singleton.Shutdown();
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
+
 }

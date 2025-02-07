@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7859334258113163214}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: NetworkObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 521346315
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -54,7 +54,7 @@ MonoBehaviour:
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 1
   SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
+  DontDestroyWithOwner: 1
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
@@ -71,3 +71,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  playerName: 
+  circlePlayerName: 
+  crossPlayerName: 
+  playerTurn:
+    m_InternalValue: 1
+  crossPlayerScore:
+    m_InternalValue: 0
+  circlePlayerScore:
+    m_InternalValue: 0
+  isReady: 0
+  canPlay: 0

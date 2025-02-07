@@ -15,34 +15,52 @@ public class MenuGameUiManager : MonoBehaviour
     [SerializeField] private TMP_InputField codeInput;
     [SerializeField] private Button joinGameBtn;
 
-    private string code;
-    private string namePlayer;
+    public static string codeType;
+    public static string namePlayer;
     void Start()
     {
         namePlayerInput.onEndEdit.AddListener((string s) => {
-            GameManager.Instance.SetPlayerName(s);
-            Debug.Log("PlayerName: " + GameManager.Instance.playerName);
+            namePlayer = s;
         });
+
         hostBtn.onClick.AddListener(() =>{
+            SoundManager.Instance.Play("ClickBtn");
             SceneManager.LoadScene(1);
-            TestRelay.Instance.CreateRelay();
- 
+
+            SceneManager.sceneLoaded += HostGame_sceneLoaded;
         });
+
         joinBtn.onClick.AddListener(() => {
+            SoundManager.Instance.Play("ClickBtn");
+
             joinPanel.SetActive(true);
         });
+
         codeInput.onEndEdit.AddListener((string s) => {
-            code = s;
+            codeType = s;
         });
+
         joinGameBtn.onClick.AddListener(() => {
+            SoundManager.Instance.Play("ClickBtn");
             SceneManager.LoadScene(1);
-            TestRelay.Instance.JoinRelay(code);
+
+            SceneManager.sceneLoaded += JoinGame_sceneLoaded;
         });
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void JoinGame_sceneLoaded(Scene arg0, LoadSceneMode arg1) {
+        if (arg0.buildIndex == 1) {
+            SceneManager.sceneLoaded -= JoinGame_sceneLoaded;
+            Debug.Log("Loaded");
+            TestRelay.Instance.JoinRelay(codeType);
+        }
+    }
+
+    private void HostGame_sceneLoaded(Scene arg0, LoadSceneMode arg1) {
+        if(arg0.buildIndex == 1) {
+            SceneManager.sceneLoaded -= HostGame_sceneLoaded;
+            Debug.Log("Loaded");
+            TestRelay.Instance.CreateRelay();
+        }
     }
 }
