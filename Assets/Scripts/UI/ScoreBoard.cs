@@ -22,8 +22,8 @@ public class ScoreBoard : MonoBehaviour
     void Start()
     {
         GameManager.Instance.playerTurn.OnValueChanged += ChangeArrow_OnChangeTurn;
-        //GameManager.Instance.crossPlayerScore.OnValueChanged += UpdateCrossScore_OnValueChange;
-        //GameManager.Instance.circlePlayerScore.OnValueChanged += UpdateCircleScore_OnValueChange;
+        GameManager.Instance.crossPlayerScore.OnValueChanged += UpdateCrossScore_OnValueChange;
+        GameManager.Instance.circlePlayerScore.OnValueChanged += UpdateCircleScore_OnValueChange;
         GameManager.Instance.OnStartGame += ScoreBoard_OnStartGame;
         GameManager.Instance.OnPlayerHost += ScoreBoard_OnPlayerHost;
     }
@@ -35,13 +35,13 @@ public class ScoreBoard : MonoBehaviour
         code.gameObject.GetComponent<TextMeshProUGUI>().text = "Code: " + TestRelay.CodeGame;
     }
 
-    //private void UpdateCrossScore_OnValueChange(int oldVal, int newVal) {
-    //    crossScore.GetComponent<TextMeshProUGUI>().text = newVal.ToString();
-    //}
+    private void UpdateCrossScore_OnValueChange(int oldVal, int newVal) {
+        crossScore.GetComponent<TextMeshProUGUI>().text = newVal.ToString();
+    }
 
-    //private void UpdateCircleScore_OnValueChange(int oldVal, int newVal) {
-    //    circleScore.GetComponent<TextMeshProUGUI>().text = newVal.ToString();
-    //}
+    private void UpdateCircleScore_OnValueChange(int oldVal, int newVal) {
+        circleScore.GetComponent<TextMeshProUGUI>().text = newVal.ToString();
+    }
 
     private void ScoreBoard_OnStartGame(object sender, GameManager.OnStartGameArgs e) {
         SetUpToStart(e.crossPlayerName, e.circlePlayerName, e.playerType, e.codeGame);

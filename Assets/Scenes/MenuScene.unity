@@ -3190,6 +3190,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2572023968885297205, guid: 2f2d565123448c64ba5018748498601a, type: 3}
+      propertyPath: listNetworkObj.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5901658983560538763, guid: 2f2d565123448c64ba5018748498601a, type: 3}
       propertyPath: m_Name
       value: TestRelay

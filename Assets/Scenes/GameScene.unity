@@ -2257,6 +2257,60 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519872905}
   m_CullTransparentMesh: 1
+--- !u!1 &527674687
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 527674689}
+  - component: {fileID: 527674688}
+  m_Layer: 0
+  m_Name: GameOverUIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &527674688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527674687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 745b9c3f8dd9f2645baed297adc9c383, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameOverUI: {fileID: 746336125}
+  wintTitle: {fileID: 160380782}
+  loseTitle: {fileID: 2111267540}
+  tieTitle: {fileID: 1064892246}
+  rematchBtn: {fileID: 344452731}
+  readyBtn: {fileID: 1957763558}
+  menuBtn: {fileID: 519872907}
+  crossPlayerScore: {fileID: 974851850}
+  circlePlayerScore: {fileID: 1001704620}
+  notifyUI: {fileID: 298000036}
+--- !u!4 &527674689
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527674687}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &547916803
 GameObject:
   m_ObjectHideFlags: 0
@@ -3110,7 +3164,7 @@ MonoBehaviour:
   m_text: Rematch
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a538fb680e12f87449793ae489c4c560, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: -4256851896405670205, guid: a538fb680e12f87449793ae489c4c560, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3175,7 +3229,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &850590722
@@ -4453,7 +4507,7 @@ GameObject:
   - component: {fileID: 1091571277}
   - component: {fileID: 1091571276}
   m_Layer: 5
-  m_Name: CrossScore (1)
+  m_Name: CircleScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6116,7 +6170,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1628788768
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6757,7 +6811,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1700938487
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6890,7 +6944,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1729448438
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8026,135 +8080,14 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6fa85eb7d62ba3144902c6f18bbf61d7, type: 3}
---- !u!1001 &8958892880642210992
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: menuBtn
-      value: 
-      objectReference: {fileID: 519872907}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: readyBtn
-      value: 
-      objectReference: {fileID: 1957763558}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: tieTiltle
-      value: 
-      objectReference: {fileID: 1064892246}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: winTiltle
-      value: 
-      objectReference: {fileID: 160380782}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: gameOverUI
-      value: 
-      objectReference: {fileID: 746336125}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: loseTiltle
-      value: 
-      objectReference: {fileID: 2111267540}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: readyTitle
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: rematchBtn
-      value: 
-      objectReference: {fileID: 344452731}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: notifyPanel
-      value: 
-      objectReference: {fileID: 298000036}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: rematchTitle
-      value: 
-      objectReference: {fileID: 850590719}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: crossPlayerScore
-      value: 
-      objectReference: {fileID: 974851850}
-    - target: {fileID: 4216495183977791674, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: circlePlayerScore
-      value: 
-      objectReference: {fileID: 1001704620}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5369908250078927622, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6521186537296497089, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6521186537296497089, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 3730438181
-      objectReference: {fileID: 0}
-    - target: {fileID: 6521186537296497089, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 2613181944
-      objectReference: {fileID: 0}
-    - target: {fileID: 6757571661920357528, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_Name
-      value: GameOverUIManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 6757571661920357528, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 894db31c55022ab49965f1914005c6bd, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
-  - {fileID: 8958892880642210992}
   - {fileID: 177794023}
+  - {fileID: 527674689}
   - {fileID: 1653793358}
   - {fileID: 517532529}
   - {fileID: 2339147395665484820}

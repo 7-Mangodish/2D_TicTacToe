@@ -1,126 +1,103 @@
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameOverUiManager : NetworkBehaviour
+public class GameOverUiManager : MonoBehaviour
 {
     [SerializeField] private GameObject gameOverUI;
-    [SerializeField] private GameObject notifyPanel;
-    [SerializeField] private GameObject winTiltle;
-    [SerializeField] private GameObject loseTiltle;
-    [SerializeField] private GameObject tieTiltle;
-    [SerializeField] private Button readyBtn;
+    [SerializeField] private GameObject wintTitle;
+    [SerializeField] private GameObject loseTitle;
+    [SerializeField] private GameObject tieTitle;
     [SerializeField] private Button rematchBtn;
+    [SerializeField] private Button readyBtn;
+    [SerializeField] private Button menuBtn;
+
     [SerializeField] private TextMeshProUGUI crossPlayerScore;
     [SerializeField] private TextMeshProUGUI circlePlayerScore;
 
-    [SerializeField] private Button menuBtn;
+    [SerializeField] private GameObject notifyUI;
 
-    private void Awake() {
-        rematchBtn.onClick.AddListener(() => {
-            SoundManager.Instance.Play("ClickBtn");
 
-            Debug.Log("rematchBtn");
-            if(GameManager.Instance.isReady == true) {
-                Hide();
-                GameManager.Instance.RematchRpc();
-            }
-            else {
-                notifyPanel.SetActive(true);
-            }
-        });
+    private async void  Start() {
+        await Task.Delay(1000); // wait for GameManager 
+        GameManager.Instance.OnPlayerWin += GameOver_OnPlayerWin;
+        GameManager.Instance.crossPlayerScore.OnValueChanged += GameOver_crossPlayerScoreChange;
+        GameManager.Instance.circlePlayerScore.OnValueChanged += GameOver_circlePlayerScoreChange;
+
         readyBtn.onClick.AddListener(() => {
             SoundManager.Instance.Play("ClickBtn");
 
-            Debug.Log("Ready");
             GameManager.Instance.ReadyMatchRpc();
-            Hide();
+            TurnOffUI();
         });
-        menuBtn.onClick.AddListener(() => {
+
+        rematchBtn.onClick.AddListener(() => {
             SoundManager.Instance.Play("ClickBtn");
-            GameObject networkManager = GameObject.FindGameObjectWithTag("NetworkManager");
 
-            if (networkManager != null)
-                Debug.Log("Find Network");
-            Destroy(networkManager);
+            if (GameManager.Instance.isReady) {
+                GameManager.Instance.RematchRpc();
+                TurnOffUI();
+            }
+            else {
+                notifyUI.gameObject.SetActive(true);
+            }
+        });
 
-            NetworkManager.Singleton.Shutdown();
-            SceneManager.LoadScene(0);
+        menuBtn.onClick.AddListener(() => {
+            TurnOffUI();
+            SoundManager.Instance.Play("ClickBtn");
+
+            GameManager.Instance.Disconect();
         });
     }
-    void Start()
-    {
 
-        GameManager.Instance.OnPlayerWin += GameOver_OnPlayerWinRpc;
-        GameManager.Instance.crossPlayerScore.OnValueChanged += UpdateCrossScore_OnValueChange;
-        GameManager.Instance.circlePlayerScore.OnValueChanged += UpdateCircleScore_OnValueChange;
-        GameManager.Instance.OnPlayerTie += GameOver_OnPlayerTie;
+
+    private async void GameOver_OnPlayerWin(object sender, GameManager.OnPlayerWinArgs e) {
+        await Task.Delay(500);
+        if (GameManager.Instance.IsServer)
+            Debug.Log("Call from Server");
+        else
+            Debug.Log("Call from Client");
+        Debug.Log("Type win" + e.winType);
+
+        gameOverUI.SetActive(true);
+        SetButton();
+        SetTitle(e.winType);
     }
 
-
-
-    void Update()
-    {
-        
+    private void SetButton() {
+        if(GameManager.Instance.IsServer)
+            rematchBtn.gameObject.SetActive(true);
+        else
+            readyBtn.gameObject.SetActive(true);
     }
 
-    private void GameOver_OnPlayerTie(object sender, System.EventArgs e) {
-        SetPanelTieRpc();
+    private void SetTitle(GameManager.PlayerType playerWin) {
+        if(GameManager.Instance.GetPlayerType() == playerWin)
+            wintTitle.SetActive(true);
+        else
+            loseTitle.SetActive(true);
     }
-    private void UpdateCrossScore_OnValueChange(int oldVal, int newVal) {
+
+    private void GameOver_crossPlayerScoreChange(int oldVal, int newVal){
         crossPlayerScore.text = newVal.ToString();
     }
 
-    private void UpdateCircleScore_OnValueChange(int oldVal, int newVal) {
+    private void GameOver_circlePlayerScoreChange(int oldVal, int newVal) {
         circlePlayerScore.text = newVal.ToString();
     }
-    private void GameOver_OnPlayerWinRpc(object sender, GameManager.OnPlayerWinArgs e) {
-        SetPanelRpc(e.winType);
-    }
 
-    #region When Player Win
-    [Rpc(SendTo.ClientsAndHost)]
-    private void SetPanelRpc(GameManager.PlayerType winType) {
+    private void TurnOffUI() {
+        wintTitle.gameObject.SetActive(false);
+        loseTitle.gameObject.SetActive(false);
+        tieTitle.gameObject.SetActive(false);
 
-        gameOverUI.SetActive(true);
-        if (GameManager.Instance.GetPlayerType() == winType) {
-            winTiltle.SetActive(true);
-            Debug.Log("Win");
-        }
-        else {
-            loseTiltle.SetActive(true);
-            Debug.Log("Lose");
-        }
-        SetRematchBtn();
-    }
-    #endregion
-
-    #region When Player Tie
-    [Rpc(SendTo.ClientsAndHost)]
-    private void SetPanelTieRpc() {
-        gameOverUI.SetActive(true) ;
-        tieTiltle.SetActive(true);
-        SetRematchBtn() ;
-    }
-    #endregion
-
-    private void SetRematchBtn() {
-        if (GameManager.Instance.IsServer) {
-            rematchBtn.gameObject.SetActive(true);
-        }
-        else {
-            readyBtn.gameObject.SetActive(true);
-        }
-    }
-    private void Hide() {
-        gameOverUI.SetActive(false);
-        winTiltle.SetActive(false);
-        loseTiltle.SetActive(false);
-        tieTiltle.SetActive(false);
         readyBtn.gameObject.SetActive(false);
-        rematchBtn.gameObject.SetActive(false);
-        notifyPanel.gameObject.SetActive(false);
+        rematchBtn.gameObject.SetActive(!false);
+        gameOverUI.SetActive(false);
+        notifyUI.SetActive(false);
     }
 }

@@ -28,6 +28,7 @@ public class GameManager : NetworkBehaviour {
     public event EventHandler<OnStartGameArgs> OnStartGame;
     public event EventHandler OnRematch;
     public event EventHandler OnPlayerHost;
+
     public enum PlayerType {
         None,
         cross,
@@ -64,6 +65,8 @@ public class GameManager : NetworkBehaviour {
         Debug.Log(playerName);
     }
 
+
+
     public override void OnNetworkSpawn() {
 
         if (NetworkManager.Singleton.LocalClientId == 0) {
@@ -79,9 +82,29 @@ public class GameManager : NetworkBehaviour {
         if (IsServer) {
 
             NetworkManager.Singleton.OnClientConnectedCallback += StartGame_OnClientConnectedCallBack;
+
+        }
+
+    }
+
+    public override void OnNetworkDespawn() {
+        if (IsServer) {
+            NetworkManager.Singleton.OnClientDisconnectCallback += OutMatch_OnClientDisconnectCallback;
         }
     }
 
+    public void Disconect() {
+        if (IsServer) {
+            NetworkManager.Singleton.OnClientDisconnectCallback += OutMatch_OnClientDisconnectCallback;
+        }
+        if (IsClient) {
+            TestRelay.Instance.OutMatch();
+        }
+    }
+
+    private void OutMatch_OnClientDisconnectCallback(ulong obj) {
+        Debug.Log("Client out");
+    }
 
     [Rpc(SendTo.Server)]
     public void HandlerClickPositionRpc(int x, int y, PlayerType playerType) {
@@ -107,20 +130,14 @@ public class GameManager : NetworkBehaviour {
 
         if (CheckPlayerWin()) {
             win.type = arrayPlayer[win.pos.x, win.pos.y];
-            OnPlayerWin?.Invoke(this, new OnPlayerWinArgs {
-                posWinX = win.pos.x,
-                posWinY = win.pos.y,
-                winType = win.type,
-                winAngle = win.angle,
-            }) ;
+            SetPlayerWinRpc(win.pos.x, win.pos.y, win.angle, win.type);
 
             if (win.type == PlayerType.cross)
                 crossPlayerScore.Value += 1;
             else
-                circlePlayerScore.Value += 1;    
-            
+                circlePlayerScore.Value += 1;
+
             canPlay = false;
-            Debug.Log("Win: " + win.pos + " " + win.angle + " " + win.type);
         }
         else {
             if (CheckPlayerTie()) {
@@ -183,7 +200,6 @@ public class GameManager : NetworkBehaviour {
         }
         return  false;
     }
-    
     private bool CheckPlayerTie() {
         for(int i=0; i<arrayPlayer.GetLength(0); i++) {
             for(int j = 0; j<arrayPlayer.GetLength(1); j++) {
@@ -261,6 +277,20 @@ public class GameManager : NetworkBehaviour {
     #endregion
 
 
+
+    [Rpc(SendTo.Everyone)]
+    private void SetPlayerWinRpc(int posWinX, int posWinY, float angleWin,PlayerType playerWinType) {
+        Debug.Log(playerWinType);
+        OnPlayerWin?.Invoke(this, new OnPlayerWinArgs {
+            posWinX = posWinX,
+            posWinY = posWinY,
+            winType = playerWinType,
+            winAngle = angleWin,
+        });
+
+        Debug.Log( posWinX + " " + posWinY+ " " + angleWin + " " + playerWinType);
+
+    }
     public PlayerType GetPlayerType() {
         return playerType;
     }
