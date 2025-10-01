@@ -26,6 +26,7 @@ public class GameOverUiManager : MonoBehaviour
         GameManager.Instance.OnPlayerWin += GameOver_OnPlayerWin;
         GameManager.Instance.crossPlayerScore.OnValueChanged += GameOver_crossPlayerScoreChange;
         GameManager.Instance.circlePlayerScore.OnValueChanged += GameOver_circlePlayerScoreChange;
+        GameManager.Instance.OnClientOutMatch += GameOver_OnClientOutMatch;
 
         readyBtn.onClick.AddListener(() => {
             SoundManager.Instance.Play("ClickBtn");
@@ -50,10 +51,14 @@ public class GameOverUiManager : MonoBehaviour
             TurnOffUI();
             SoundManager.Instance.Play("ClickBtn");
 
-            GameManager.Instance.Disconect();
+            TestRelay.Instance.OutMatch();
+            //GameManager.Instance.Disconect();
         });
     }
 
+    private void GameOver_OnClientOutMatch(object sender, System.EventArgs e) {
+        TurnOffUI();
+    }
 
     private async void GameOver_OnPlayerWin(object sender, GameManager.OnPlayerWinArgs e) {
         await Task.Delay(500);

@@ -28,6 +28,7 @@ public class GameManager : NetworkBehaviour {
     public event EventHandler<OnStartGameArgs> OnStartGame;
     public event EventHandler OnRematch;
     public event EventHandler OnPlayerHost;
+    public event EventHandler OnClientOutMatch;
 
     public enum PlayerType {
         None,
@@ -82,28 +83,19 @@ public class GameManager : NetworkBehaviour {
         if (IsServer) {
 
             NetworkManager.Singleton.OnClientConnectedCallback += StartGame_OnClientConnectedCallBack;
-
+            NetworkManager.Singleton.OnClientDisconnectCallback += OutMatch_OnClientDisconnectCallback;
         }
 
     }
 
     public override void OnNetworkDespawn() {
-        if (IsServer) {
-            NetworkManager.Singleton.OnClientDisconnectCallback += OutMatch_OnClientDisconnectCallback;
-        }
-    }
+        Debug.Log("Client out :");
 
-    public void Disconect() {
-        if (IsServer) {
-            NetworkManager.Singleton.OnClientDisconnectCallback += OutMatch_OnClientDisconnectCallback;
-        }
-        if (IsClient) {
-            TestRelay.Instance.OutMatch();
-        }
     }
-
     private void OutMatch_OnClientDisconnectCallback(ulong obj) {
-        Debug.Log("Client out");
+        Debug.Log("Client out match:" + obj);
+        OnClientOutMatch?.Invoke(this, EventArgs.Empty);
+        OnRematch?.Invoke(this, EventArgs.Empty);
     }
 
     [Rpc(SendTo.Server)]
@@ -258,11 +250,7 @@ public class GameManager : NetworkBehaviour {
     public void RematchRpc() {
         Debug.Log("IsReady: " + isReady);
         if (isReady) {
-            for (int i = 0; i < arrayPlayer.GetLength(0); i++) {
-                for (int j = 0; j < arrayPlayer.GetLength(1); j++) {
-                    arrayPlayer[i, j] = PlayerType.None;
-                }
-            }
+            ResetPlayerType();
             OnRematch?.Invoke(this, EventArgs.Empty);
             isReady = false;
             canPlay = true;
@@ -273,6 +261,14 @@ public class GameManager : NetworkBehaviour {
     [Rpc(SendTo.Server)]
     public void ReadyMatchRpc() {
         isReady = true;
+    }
+
+    private void ResetPlayerType() {
+        for (int i = 0; i < arrayPlayer.GetLength(0); i++) {
+            for (int j = 0; j < arrayPlayer.GetLength(1); j++) {
+                arrayPlayer[i, j] = PlayerType.None;
+            }
+        }
     }
     #endregion
 

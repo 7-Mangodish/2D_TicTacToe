@@ -25,6 +25,8 @@ public class PauseUIManager : MonoBehaviour
         menuBtn.onClick.AddListener(() => {
             SoundManager.Instance.Play("ClickBtn");
 
+            TestRelay.Instance.OutMatch();
+            SceneManager.LoadScene(0);
         });
         continueBtn.onClick.AddListener(() => {
             SoundManager.Instance.Play("ClickBtn");

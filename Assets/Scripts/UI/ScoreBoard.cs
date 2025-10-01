@@ -26,6 +26,13 @@ public class ScoreBoard : MonoBehaviour
         GameManager.Instance.circlePlayerScore.OnValueChanged += UpdateCircleScore_OnValueChange;
         GameManager.Instance.OnStartGame += ScoreBoard_OnStartGame;
         GameManager.Instance.OnPlayerHost += ScoreBoard_OnPlayerHost;
+        GameManager.Instance.OnClientOutMatch += ScoreBoard_OnClientOutMatch;
+
+    }
+
+    private void ScoreBoard_OnClientOutMatch(object sender, EventArgs e) {
+        circleNameText.gameObject.GetComponent<TextMeshProUGUI>().text = "Wait for other player";
+        crossArrow.gameObject.SetActive(false);
     }
 
     private void ScoreBoard_OnPlayerHost(object sender, EventArgs e) {

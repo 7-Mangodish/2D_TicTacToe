@@ -21,12 +21,6 @@ public class VisualManager : NetworkBehaviour
         GameManager.Instance.OnRematch += VisualManager_OnRematch;
     }
 
-
-
-    void Update()
-    {
-        
-    }
     private void VisualManager_OnRematch(object sender, System.EventArgs e) {
         foreach(GameObject obj in listSprite) {
             Destroy(obj);
